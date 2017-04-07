@@ -62,6 +62,8 @@ function hexToRgb(hex) {
     } : null;
 }
 
+
+
 $('#rgb').on('change', function(){
     var val = $(this).val();
     if (val[0] !== "#" ) {
@@ -113,7 +115,8 @@ var v_ratio = 0.8;
 
 function contraster(hsv) {
     contrasterSingle(hsv.h, hsv.s + 0.05, hsv.v - 0.1, "#color1");
-    contrasterSingle(hsv.h, hsv.s * s_ratio, hsv.v * v_ratio, "#color2");
+    console.log(s_ratio);
+    contrasterSingle(hsv.h, hsv.v * v_ratio > 1 ? 1 : hsv.v * v_ratio, hsv.v * v_ratio > 1 ? 1 : hsv.v * v_ratio , "#color2");
 }
 function contrasterSingle(h, s, v, selector) {
     var rgb = HSVtoRGB(h,s,v);
