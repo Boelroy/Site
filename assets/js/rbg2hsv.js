@@ -86,6 +86,7 @@ $('#v_ratio').on('change', function() {
 
 function changeRatio() {
     $('#color2 span').text('s*' + s_ratio + ' b*' + v_ratio)
+    reserseParse()
 }
 
 $('#h, #s, #v').on('mousemove', function() {
