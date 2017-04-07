@@ -71,6 +71,22 @@ $('#rgb').on('change', function(){
         startParse(val);
     }
 });
+$('#s_ratio').on('change', function() {
+    var val = Number($(this).val());
+    if (isNaN(val)) return;
+    s_ratio = val;
+    changeRatio();
+});
+$('#v_ratio').on('change', function() {
+    var val = Number($(this).val());
+    if (isNaN(val)) return;
+    v_ratio = val;
+    changeRatio();
+});
+
+function changeRatio() {
+    $('#color2 span').text('s*' + s_ratio + ' b*' + v_ratio)
+}
 
 $('#h, #s, #v').on('mousemove', function() {
     $(this).parent().next().text($(this).val() * 100)
@@ -91,9 +107,12 @@ function startParse(hex) {
     save();
 }
 
+var s_ratio = 1.1;
+var v_ratio = 0.8;
+
 function contraster(hsv) {
     contrasterSingle(hsv.h, hsv.s + 0.05, hsv.v - 0.1, "#color1");
-    contrasterSingle(hsv.h, hsv.s * 1.1, hsv.v * 0.8, "#color2");
+    contrasterSingle(hsv.h, hsv.s * s_ratio, hsv.v * v_ratio, "#color2");
 }
 function contrasterSingle(h, s, v, selector) {
     var rgb = HSVtoRGB(h,s,v);
