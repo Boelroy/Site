@@ -4,8 +4,10 @@
   @include justify-content-center;
   @include flex-align-items(start);
   height: 100%;
-  margin-right: -15px;
-  margin-left: -15px;
+  & > a {
+    text-decoration: none;
+    color: $link-active;
+  }
 }
 
 .artical-container artical {
@@ -20,5 +22,5 @@
 }
 
 .artical__entry {
-  font-size: 40px;
+  font-size: 30px;
 }

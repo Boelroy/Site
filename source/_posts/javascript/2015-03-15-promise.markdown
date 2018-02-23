@@ -14,13 +14,12 @@ categories:
 
 二次元中有一个词叫做立flag，暗示的剧情的发展。比如如果那个角色说了一句“我保证会活着回来”，基本上这个角色就离死不远了。Javascript 最近几年也发展出类似的玩意儿，表示将来的某种状态，叫做 Promises (当然这里没有死这么严重)，早期 jQuery 的 Deferred 就是类似于 Promises 的实现（当然jQuery的Deferred不完全符合Promises现在的标准）。
 
-
 ## 聊聊 Promises 的历史
 
 所以，为什么Promises会出现？Promises最原始的是由 Daniel P. Friedman 和 David Wise 提出的。后来有出现了类似的概念叫做Futures。Futures和Promises的出现是为了解决并行编程中同步的问题。有关他们的介绍可以看这里 [Futures and Promises](https://en.wikipedia.org/wiki/Futures_and_promises)。
 
 虽然是搬运 wikipedia 的，还是要说一下一般我们会看到几个词 future, promise, deferred, delay 一般来说这几个词可以等价。但是按照原始的定义，或者更确切的从原始的意义上来解释 Futures 和 Promises 还是有细微的不同的。Futures 指的一个只读的变量的占位符，意思就是说 Futures 作为一个异步操作的符号表示，表示这个地方会有一个异步操作的返回。而 Promises 指一个可以对 Futures 进行设置或者操作的容器。 这在单词的字面的意思也能理解，未来是一种代指之后的某一时刻，而承诺本身就隐性地包含了未来。
-
+<!-- more -->
 ## 异步编程与回调
 
 Futures 和 Promises 的提出就是用来解决异步编程的，所以先来看看javascript是如何解决异步编程问题的。
@@ -31,36 +30,36 @@ Futures 和 Promises 的提出就是用来解决异步编程的，所以先来�
 
 #### 原始回调
 
-~~~ javascript
+``` javascript
 op1(function(){
-	op2(function(){
-		op3(function(){
-			// do something
-		})
-	})
+  op2(function(){
+    op3(function(){
+      // do something
+    })
+  })
 })
 
 function op1(callback) {
-	// some async things
-	// when finish execute callback();
-	reuturn; // immediately return
+  // some async things
+  // when finish execute callback();
+  reuturn; // immediately return
 }
-~~~
+```
 
-~~~ javascript
+``` javascript
 // more simple way
 
 op1(cb1)
 
 function cb1(){
-	op2(cb2)
+  op2(cb2)
 }
 
 function cb2(){
-	op3();
+  op3();
 }
 
-~~~
+```
 
 这是最原始的方法，把函数当作参数传递给异步操作，等到异步操作完成之后，调用回调函数。典型的例子就是setTimeout。
 
@@ -70,29 +69,29 @@ function cb2(){
 
 事件驱动可以很好的解决掉这个原始回调带来的问题，考虑如下代码：
 
-~~~ javascript
+``` javascript
 function async1(){
-	async1.trigger('async1-done');
+  async1.trigger('async1-done');
 }
 function async2(){ 
-	async2.trigger('async2-done');
+  async2.trigger('async2-done');
 }
 function async3(){
-	async3.trigger('async3-done');
+  async3.trigger('async3-done');
 }
 
 async1.on('async1-done', function(){
-	async2()
+  async2()
 })
 async2.on('async2-done', function(){
-	async3()
+  async3()
 })
 async3.on('async3-done', function(){
-	// some thing
+  // some thing
 })
 
 async1();
-~~~
+```
 
 我们看到这里的代码的耦合程度，从代码的可维护性来说，显然这里的事件驱动会明显好于前一种。
 
@@ -100,30 +99,30 @@ async1();
 ### pub-sub(发布订阅)
 发布订阅是在事件驱动的基础上，把能触发事件和发布事件统一在一起，便于对事件的管理，这样避免在纯事件驱动中的事件种类不可控性。
 
-~~~ javascript
+``` javascript
 function async1(){
-	EventBus.trigger('async1-done');
+  EventBus.trigger('async1-done');
 }
 function async2(){ 
-	EventBus.trigger('async2-done');
+  EventBus.trigger('async2-done');
 }
 function async3(){
-	EventBus.trigger('async3-done');
+  EventBus.trigger('async3-done');
 }
 
 EventBus.on('async1-done', function(){
-	async2()
+  async2()
 })
 EventBus.on('async2-done', function(){
-	async3()
+  async3()
 })
 EventBus.on('async3-done', function(){
-	// some thing
+  // some thing
 })
 
 async1();
 
-~~~
+```
 这里我们还能对Eventbus限制，比如只能触发规定事件，或者只能监听规定事件，这样对面对逐渐扩大的项目，不会出现事件混乱的情况出现。
 
 ## Promises 解决方案
@@ -132,64 +131,64 @@ async1();
 
 Promises 在2007年第一次被Dojo所实现，称为dojo.Deferred。之后CommonJS一直致力于标准化Promises行为，现在最被广泛接受的是[Promises/A+](https://promisesaplus.com/)。所以这里以Promises/A+为例说明Promises。上面的代码如过用Promises可以表述成：
 
-~~~ javascript
+``` javascript
 function async1(resolve, reject) {
-	if (//sucess condition) {
-		resolve(//async1result)
-	} else {
-		reject(//reason)
-	}
+  if (//sucess condition) {
+    resolve(//async1result)
+  } else {
+    reject(//reason)
+  }
 }
 
 function async2(resolve, reject) {
-	if (//sucess condition) {
-		resolve(//async2result)
-	} else {
-		reject(//reason)
-	}
+  if (//sucess condition) {
+    resolve(//async2result)
+  } else {
+    reject(//reason)
+  }
 }
 
 function async3(resolve, reject) {
-	if (//sucess condition) {
-		resolve(//someresult)
-	} else {
-		reject(//reason)
-	}
+  if (//sucess condition) {
+    resolve(//someresult)
+  } else {
+    reject(//reason)
+  }
 }
 
 new Promise(aysnc1)
-		// basic uses
-		.then(function(result){
-					// handler sucess
-					return callback_result1
-				}, function(reason){
-					// error handler
-				})
-		// chain on same result
-		.then(function(callback_result1){
-					// handler sucess
-					return callback_result2
-				}, function(reason){
-					// error handler
-				})
-		// chain on different promise
-		.then(function(result){
-					return new Promise(async2)
-				}, function(reason){
-					// error handler
-				})
-		.then(function(async2_result){
-					return new Promise(async3)
-				}, function(reason){
-					// error handler
-				})
-		.then(function(async3_result){
-					// some thing
-				}, function(reason){
-					// error handler
-				})
+    // basic uses
+    .then(function(result){
+          // handler sucess
+          return callback_result1
+        }, function(reason){
+          // error handler
+        })
+    // chain on same result
+    .then(function(callback_result1){
+          // handler sucess
+          return callback_result2
+        }, function(reason){
+          // error handler
+        })
+    // chain on different promise
+    .then(function(result){
+          return new Promise(async2)
+        }, function(reason){
+          // error handler
+        })
+    .then(function(async2_result){
+          return new Promise(async3)
+        }, function(reason){
+          // error handler
+        })
+    .then(function(async3_result){
+          // some thing
+        }, function(reason){
+          // error handler
+        })
 
-~~~
+```
 
 这里先说明一下， 在Promise中一共只有三个状态pending, fullfilled, rejected. pending 表示异步操作还在进行，fullfilled表示这个异步操作已经成功，rejected表示这个异步操作失败了。
 
@@ -200,9 +199,9 @@ new Promise(aysnc1)
 ### 同一异步操作的链式调用
 promise允许在同一个异步调用上反复的使用then，考虑上面代码第二个then，即使在对于async1这个操作的结果进行链式的调用。第一个then中成功回调接受到async1的返回之后处理，然后再进入到第二个then中的成功回调中。这个第二个回调中的参数就是第一个回调的返回。这样我们可以一步一步的对异步操作的原始结果做链式调用，一步一步的处理数据。大大清晰了整个过程。
 
-~~~ javascript
+``` javascript
 new Promise(asyncOperation).then(processData1).then(processData2).then(processData3)
-~~~
+```
 
 注意这里，每次then对象的调用实际上是生成的一个新的Promise对象，并不能将这里的链式调用等同于jQuery中的链式调用，应为jQuery的链式调用每次都返回的是同一个对象。
 
@@ -213,24 +212,24 @@ new Promise(asyncOperation).then(processData1).then(processData2).then(processDa
 ### 错误异常处理
 你可以直接在异步操作的过程中或者在对结果的处理过程中，抛出任何的错误。Promise都会帮你传递到下一个then的错误处理中。对异常和错误的处理十分的方便
 
-~~~ javascript
+``` javascript
 new Promise(function(resolve, reject){
-	throw e
+  throw e
 }).then(function(){
 
 }, function(e){
 
 })
 new Promise(function(resolve, reject){
-	resolve(e)
+  resolve(e)
 }).then(function(){
-	throw new Error("This is an error")
+  throw new Error("This is an error")
 }, function(){
 
 }).then(null, function(e){
-	console.log(e)
+  console.log(e)
 })
-~~~
+```
 
 注意，这里的错误处理不会一直传递下去，只会错误出现的下一个then中的错误的处理中被接收到。再下一个then的那个回调会被触发完全取决于你的返回。
 

@@ -39,12 +39,12 @@
 
 .header-nav li {
   float: right;
-  color: #acacac;
+  color: $link-color;
   padding: 0 20px;
   font-size: 20px;
   cursor: pointer;
   a {
-    color: #acacac;
+    color: $link-color;
     text-decoration: none;
   }
 
@@ -52,7 +52,7 @@
   &:hover,
   &.active a,
   &:hover a{
-    color: #0c306f;
+    color: $link-active;
   }
 }
 

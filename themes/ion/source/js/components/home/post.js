@@ -1,9 +1,9 @@
 const Vue = require('vue');
 const template = `
-  <a-link href="/{{page.slug}}">
+  <a-link :href="'/'+post.slug">
     <artical>
       <img src="/css/images/japanblog_dribbble.png" class="artical__thumbnail">
-      <div class="artical__entry"></div>
+      <div class="artical__entry">{{post.title}}</div>
     </artical>
   </a-link>`
 

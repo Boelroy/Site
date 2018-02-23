@@ -11,10 +11,11 @@ categories:
 - 碎碎念
 ---
 
-### [![qing](/assets/pics/graduate.jpg)](/assets/pics/graduate.jpg)
 再过几个小时就是世界杯决赛，于是在这空白的几个小时中，我决定一边吹着冷气一边码字。其实我也不知道为什么会决定码字来打发时光，因为我很清晰地记得距我上次码字已经过去了两年，估计就是心血来潮了吧。
-
+<!-- more -->
 其实在每一段赤诚的叙述或着回忆的开始之前，都是困顿。
+
+[![qing](/pics/graduate.jpg)](/pics/graduate.jpg)
 
 嗯……如果我的青春用这样的方式来说——
 

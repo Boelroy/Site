@@ -6,7 +6,12 @@ var pages = require('./pages');
 let App = new Vue({
   el: '#app',
   data: {
-    currentView: 'page-home'
+    currentView: 'page-home',
+    route: {
+      query: {},
+      path: '/',
+      params: []
+    }
   },
   ready() {
     

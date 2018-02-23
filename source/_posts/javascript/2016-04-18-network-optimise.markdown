@@ -10,7 +10,7 @@ categories:
 - javascript
 ---
 
-### [![speed-up](/assets/pics/Speed-up.png)](/assets/pics/Speed-up.png)
+### [![speed-up](/pics/Speed-up.png)](/pics/Speed-up.png)
 
 现在我们在开发一个网页的时候有很多的优化的最佳实践，诸如将Javascript放在文档的底部。很多时候我们已经将这个最佳实践当成了习惯，其实探究这些方法背后的原理还是挺好玩的一件事。当然在这里Google给出了很详细的文章[说明](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/?hl=en)
 
@@ -19,11 +19,11 @@ categories:
 ## Critical Rendering Path
 
 当然``当你在浏览器中按下回车键到页面展现的整个过程``是一个很远古的面试问题，这个 [github repo](https://github.com/alex/what-happens-when) 很清楚而且详细的探究了整个过程。这里重点强调一下整个页面渲染的过程。
-
+<!-- more -->
 #### 得到DOM树
 当浏览器获得了请求的HTML之后，会先干一件事情，就是将整个HTML解析成DOM树。
 
-~~~
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,12 +35,11 @@ categories:
     <div><img src="awesome-photo.jpg"></div>
 </body>
 </html>
-
-~~~
+```
 
 所以上面的HTML会被解析成如下的结构
 
-### [![dom-tree](/assets/pics/dom-tree.png)](/assets/pics/dom-tree.png)
+[![dom-tree](/pics/dom-tree.png)](/pics/dom-tree.png)
 
 这里说明一下DOM，当然学JavaScript的人都知道DOM是文档对象模型，他本是是对XML的一个通用的变成接口，但是经过扩展之后就能用于HTML，提供了对HTML删除，添加替换和修改的api。其本身只是一个通用的规范。在这个规范中其实``并没有``指定文档的结构必须是一个树形的。当然树形结构有他本身的优势，所以基本上所有的说法都会用到 DOM tree 这个词。这里是[DOM](https://www.w3.org/TR/DOM-Level-2-Core/introduction.html)的定义。
 
@@ -50,17 +49,17 @@ categories:
 
 当浏览器解析了HTML之后，发现了一个stylesheet的标签，所以浏览器立刻发出一个请求，获取test.css的内容
 
-~~~
+```css
 body { font-size: 16px }
 p { font-weight: bold }
 span { color: red }
 p span { display: none }
 img { float: right }
-~~~
+```
 
 在获取到css之后，和HTML一样，浏览器会做将css解析成一种结构，这里称为CCSOM，CSS对象模型。具体解析如下：
 
-###[![cssom-tree](/assets/pics/cssom-tree.png)](/assets/pics/cssom-tree.png)
+[![cssom-tree](/pics/cssom-tree.png)](/pics/cssom-tree.png)
 
 当然这里我们假设一个HTML中没有样式存在，那么是不是可以跳过这个过程呢？答案是否定的，我们都知道浏览器会有默认样式，所以默认样式也会被构建成CCSOM。当然考虑到这些，我们也就知道上图中的树其实是不完整的。
 
@@ -83,7 +82,7 @@ img { float: right }
 
 下面就是上述HTML的渲染树：
 
-###[![render-tree-construction](/assets/pics/render-tree-construction.png)](/assets/pics/render-tree-construction.png)
+[![render-tree-construction](/pics/render-tree-construction.png)](/pics/render-tree-construction.png)
 
 #### 计算布局和渲染
 
@@ -104,13 +103,13 @@ img { float: right }
 >
 >5.将渲染树种的每个节点绘制到屏幕上。
 
-###[![crp](/assets/pics/crp.png)](/assets/pics/crp.png)
+[![crp](/pics/crp.png)](/pics/crp.png)
 
 #### Javascript 去哪里了？
 
 这里我们没有讨论到JavaScript对也页面的影响，假设我们有如下的页面
 
-~~~
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -121,8 +120,7 @@ img { float: right }
     <div>I love <script> document.write('awesome')</script> Javascript </div>
 </body>
 </html>
-
-~~~
+```
 
 我们会在屏幕上看见什么？可能有的人认为是``I love Javascript``, 但实际上最后我们在屏幕上看见的是``I love awesome Javascript``。
 
@@ -159,9 +157,9 @@ img { float: right }
 #### Media query on \<link\> 
 media query 用于对于不同媒体样式的区分，诸如打印，投影之类的(一般不太常见)。但是如果用于响应式网站上，media query 就可以排上大用场。如下面的CSS标签在一般的桌面网站的加载过程中是不会阻塞页面的初次渲染的。
 
-~~~
+```html
 <link rel="stylesheet" media="(max-width: 768px)" href="example.css" />
-~~~
+```
 
 在你访问桌面网站的时候，如果浏览器的宽度大于768px的时候，example.css不会成为关键资源，这样就可以减少关键资源的数量。
 
@@ -175,19 +173,16 @@ media query 用于对于不同媒体样式的区分，诸如打印，投影之�
 
 #### 动态 Script tag
 
-~~~
-<script>
+```javascript
 var loadScript = function() {
-	var script = document.createElement("script");
-	script.type = "text/javascript";
-	script.src = "script1.js";
-	document.getElementsByTagName("head")[0].appendChild(script);
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = "script1.js";
+  document.getElementsByTagName("head")[0].appendChild(script);
 }
 
 document.addEventListener('DOMContentLoad', loadScript);
-
-</script>
-~~~
+```
 
 这里代码很好理解，就是等到DOM构建完成之后我们再去加载这个脚本。这样我们也可以将JavaScript脚本从关键渲染路径当中去除掉
 
@@ -195,23 +190,23 @@ document.addEventListener('DOMContentLoad', loadScript);
 
 其实和上面代码原理一样，只是获取JS的方式从 Script tag 变成了 通过 XMLHttpRequest 来获取
 
-~~~
+```javascript
 function loadScript() {
-	var xhr = new XMLHttpRequest();
-	xhr.open("get", "script1.js", true);
-	xhr.onreadystatechange = function(){
-	    if (xhr.readyState == 4){
-	        if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304){
-	            var script = document.createElement ("script");
-	            script.type = "text/javascript";
-	            script.text = xhr.responseText;
-	            document.body.appendChild(script);
-	        }
-	    }
-	};
-	xhr.send(null);
+  var xhr = new XMLHttpRequest();
+  xhr.open("get", "script1.js", true);
+  xhr.onreadystatechange = function(){
+      if (xhr.readyState == 4){
+          if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304){
+              var script = document.createElement ("script");
+              script.type = "text/javascript";
+              script.text = xhr.responseText;
+              document.body.appendChild(script);
+          }
+      }
+  };
+  xhr.send(null);
 }
-~~~
+```
 
 ### 总结
 从分析了从获取到HTML之后到整个页面的渲染过程之后，我们可以轻而易举的看出那些优化手段的背后的原理基础。也就跟深刻的理解了页面优化手段。当然这个只是整个网站前端优化的一小部分，我们还要从网络层面，服务器层面去优化。这里先埋个坑，下片文章再补。

@@ -3,16 +3,16 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
+title: Boelroy
 subtitle:
 description:
-author: John Doe
+author: Boelroy
 language:
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://blog.boelroy.com
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -42,7 +42,16 @@ highlight:
   line_number: true
   auto_detect: false
   tab_replace:
-
+  
+# Home page setting
+# path: Root path for your blogs index page. (default = '')
+# per_page: Posts displayed per page. (0 = disable pagination)
+# order_by: Posts order. (Order by date descending by default)
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+  
 # Category & Tag
 default_category: uncategorized
 category_map:
@@ -63,39 +72,15 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: ion
+theme: apollo
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type:
 
-node_sass:
-  outputStyle: nested
-  precision: 5
-  sourceComments: false
-
-restful:
-  # site 可配置为数组选择性生成某些属性
-  # site: ['title', 'subtitle', 'description', 'author', 'since', email', 'favicon', 'avatar']
-  site: true        # hexo.config mix theme.config
-  posts_size: 10    # 文章列表分页，0 表示不分页
-  posts_props:      # 文章列表项的需要生成的属性
-    title: true
-    slug: true
-    date: true
-    updated: true
-    comments: true
-    path: true
-    excerpt: false
-    content: false
-    keywords: false
-    categories: true
-    tags: true
-  categories: true  # 分类数据
-  tags: true        # 标签数据
-  post: true        # 文章数据
-
-webpack:
-  entry:
-    - './themes/ion/source/js/base.js'
+archive_generator:
+    per_page: 0
+    yearly: false
+    monthly: false
+    daily: false

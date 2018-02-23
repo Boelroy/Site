@@ -2,9 +2,19 @@
  * RouterSingleton
  */
 
+const find = require('lodash/find');
+const utils = require('./utils');
+const getRouterReg = utils.getRouterReg;
+const parseQueryString = utils.parseQueryString;
+const testPredicate = (path) => (route) => route.reg.test(path);
+
 let RouterInstance_ = null;
 
 class RouterSingleton {
+
+  /*
+   * singleton of the router
+   */
   static getRouter(app) {
     if (RouterInstance_ === null) {
       RouterInstance_ = new Router(app);
@@ -12,6 +22,9 @@ class RouterSingleton {
     return RouterInstance_;
   }
 
+  /*
+   * call back for the link element
+   */
   static clickCallBack(e) {
     e.preventDefault();
     let router = RouterSingleton.getRouter();
@@ -24,9 +37,9 @@ class RouterSingleton {
  */
 class Router {
   constructor(app) {
-    this.routes = {};
+    this.routes = [];
     this.currentPath = null;
-    this.defaulComponent = null;
+    this.defaulRoute = null;
     this.app = app;
     window.addEventListener('popstate', (e) => {
       this.onPopState(e);
@@ -44,24 +57,21 @@ class Router {
   }
 
   _addRoute(path, component) {
-    if (this.routes[path]) {
-      throw 'A handler alreay exists for this path: ' + path;
+    const route = {
+      reg : getRouterReg(path),
+      component: component
+    }; 
+    this.routes.push(route);
+    if (path === '/') {
+      this.setDefaultComponent(route);
     }
-    this.routes[path] = component;
   }
 
-  setDefaultComponent(component) {
-    if (this.defaulComponent) {
+  setDefaultRoute(route) {
+    if (this.defaulRoute) {
       throw 'A default handler already exists';
     }
-    this.defaulComponent = component;
-  }
-
-  removeRouter(path) {
-    if (!this.routes[path]) {
-      return;
-    }
-    delete this.routes[path];
+    this.defaulRoute = route;
   }
 
   requestStateUpdate() {
@@ -70,37 +80,37 @@ class Router {
     })
   }
 
-  getCurrentComponent() {
-    return this.routes[this.currentPath];
-  }
-
   manageState() {
     var newPath = document.location.pathname;
-    var newComponent = this.routes[newPath];
-    var currentComponent = this.routes[this.currentPath];
-    
-    this.app.currentView = newComponent;
-    if (!newComponent && this.setDefaultActivity) {
-      newComponent = this.defaulActivity;
+    var newRoute = find(this.routes, testPredicate(newPath));
+
+    if (!newRoute && this.defaulRoute) {
+      newRoute = this.defaulRoute;
     }
 
     if (this.currentPath === newPath) {
-      if (typeof newComponent.onUpdate === 'function') {
-        newComponent.onUpdate();
-        return true;
-      }
+      //TODO: may be refresh the view
       return false;
     }
-    if (currentComponent) {
-      // currentComponent.onFinish();
-    }
-    if (newComponent) {
-      // newComponent.onStart();
+
+    if (newRoute) {
       this.currentPath = newPath;
+      this._updateAppState(newRoute, newPath);
     } else {
       this.currentPath = null;
     }
-    
+  }
+
+  _updateAppState(newRoute, newPath) {
+    const reg = newRoute.reg;
+    var matches = newPath.match(reg);
+    this.app.$data.route = {
+      path: newPath,
+      params: matches.slice(1),
+      fragment: location.hash,
+      query: parseQueryString(location.search)
+    };
+    this.app.currentView = newRoute.component;
   }
 
   goToPath(path, title=null) {
