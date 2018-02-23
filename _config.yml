@@ -78,7 +78,9 @@ theme: apollo
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/Boelroy/boelroy.github.io.git
+  repo:
+    github: https://github.com/Boelroy/boelroy.github.io.git,master
+    coding: https://github.com/Boelroy/boelroy.github.io.git,master
 
 archive_generator:
     per_page: 0
