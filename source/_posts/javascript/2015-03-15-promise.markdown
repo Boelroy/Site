@@ -10,7 +10,7 @@ categories:
 - javascript
 ---
 
-### [![qing](/pics/promise.png)](/pics/promise.png)
+[![qing](/pics/promise.png)](/pics/promise.png)
 
 二次元中有一个词叫做立flag，暗示的剧情的发展。比如如果那个角色说了一句“我保证会活着回来”，基本上这个角色就离死不远了。Javascript 最近几年也发展出类似的玩意儿，表示将来的某种状态，叫做 Promises (当然这里没有死这么严重)，早期 jQuery 的 Deferred 就是类似于 Promises 的实现（当然jQuery的Deferred不完全符合Promises现在的标准）。
 
